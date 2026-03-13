@@ -4,6 +4,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from '../App'
 
+vi.mock('../steps/StarterPage', () => ({
+    default: ({ onStart }: { onStart: () => void }) => (
+        <div>
+            <span>StarterPage</span>
+            <button onClick={onStart}>START</button>
+        </div>
+    ),
+}))
+
 vi.mock('../steps/Step1PersonalInfo', () => ({
     default: ({ onNext }: { onNext: () => void }) => (
         <div>
@@ -67,12 +76,26 @@ describe('App', () => {
     describe('rendering', () => {
         it('renders without crashing', () => {
             render(<App />)
-            expect(screen.getByTestId('progress-indicator')).toBeInTheDocument()
+            expect(screen.getByText('StarterPage')).toBeInTheDocument()
         })
 
-        it('renders Step1PersonalInfo on initial load', () => {
+        it('renders StarterPage on initial load', () => {
             render(<App />)
-            expect(screen.getByText('Step1PersonalInfo')).toBeInTheDocument()
+            expect(screen.getByText('StarterPage')).toBeInTheDocument()
+        })
+
+        it('does not render ProgressIndicator on initial load', () => {
+            render(<App />)
+            expect(
+                screen.queryByTestId('progress-indicator')
+            ).not.toBeInTheDocument()
+        })
+
+        it('does not render Step1PersonalInfo on initial load', () => {
+            render(<App />)
+            expect(
+                screen.queryByText('Step1PersonalInfo')
+            ).not.toBeInTheDocument()
         })
 
         it('does not render Step2Experience on initial load', () => {
@@ -96,15 +119,24 @@ describe('App', () => {
     })
 
     describe('ProgressIndicator', () => {
-        it('shows step 1 in the progress indicator initially', () => {
+        it('shows step 1 in the progress indicator after clicking START', async () => {
             render(<App />)
-            expect(screen.getByTestId('progress-indicator')).toHaveTextContent(
-                'Step 1 of 4'
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() =>
+                expect(
+                    screen.getByTestId('progress-indicator')
+                ).toHaveTextContent('Step 1 of 4')
             )
         })
 
         it('updates progress indicator when advancing to step 2', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() =>
                 expect(
@@ -115,8 +147,24 @@ describe('App', () => {
     })
 
     describe('step navigation – forward', () => {
+        it('advances from StarterPage to step 1 when START is clicked', async () => {
+            render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() =>
+                expect(
+                    screen.getByText('Step1PersonalInfo')
+                ).toBeInTheDocument()
+            )
+        })
+
         it('advances from step 1 to step 2 when Next is clicked', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() =>
                 expect(screen.getByText('Step2Experience')).toBeInTheDocument()
@@ -125,6 +173,10 @@ describe('App', () => {
 
         it('advances from step 2 to step 3 when Next is clicked', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() => screen.getByText('Step2Experience'))
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
@@ -135,6 +187,10 @@ describe('App', () => {
 
         it('advances from step 3 to step 4 when Submit is clicked', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
 
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() => screen.getByText('Step2Experience'))
@@ -154,6 +210,10 @@ describe('App', () => {
     describe('step navigation – back', () => {
         it('goes back from step 2 to step 1 when Back is clicked', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() => screen.getByText('Step2Experience'))
             await userEvent.click(screen.getByRole('button', { name: /back/i }))
@@ -166,6 +226,10 @@ describe('App', () => {
 
         it('goes back from step 3 to step 2 when Back is clicked', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
 
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() => screen.getByText('Step2Experience'))
@@ -181,8 +245,21 @@ describe('App', () => {
     })
 
     describe('localStorage persistence', () => {
+        it('persists the current step to localStorage when navigating from StarterPage', async () => {
+            render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
+            expect(localStorage.getItem('jobApplicationStep')).toBe('1')
+        })
+
         it('persists the current step to localStorage when navigating forward', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() => screen.getByText('Step2Experience'))
             expect(localStorage.getItem('jobApplicationStep')).toBe('2')
@@ -190,6 +267,10 @@ describe('App', () => {
 
         it('persists the current step to localStorage when navigating back', async () => {
             render(<App />)
+            await userEvent.click(
+                screen.getByRole('button', { name: /start/i })
+            )
+            await waitFor(() => screen.getByText('Step1PersonalInfo'))
             await userEvent.click(screen.getByRole('button', { name: /next/i }))
             await waitFor(() => screen.getByText('Step2Experience'))
             await userEvent.click(screen.getByRole('button', { name: /back/i }))
@@ -203,9 +284,9 @@ describe('App', () => {
             expect(screen.getByText('Step2Experience')).toBeInTheDocument()
         })
 
-        it('starts at step 1 when localStorage has no saved step', () => {
+        it('starts at StarterPage when localStorage has no saved step', () => {
             render(<App />)
-            expect(screen.getByText('Step1PersonalInfo')).toBeInTheDocument()
+            expect(screen.getByText('StarterPage')).toBeInTheDocument()
         })
     })
 })

@@ -4,6 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form'
 
 import { ProgressIndicator } from './components/progress-indicator/ProgressIndicator'
 import { useFormPersist } from './hooks/useFormPersist'
+import StarterPage from './steps/StarterPage'
 import Step1PersonalInfo from './steps/Step1PersonalInfo'
 import Step2Experience from './steps/Step2Experience'
 import Step3Review from './steps/Step3Review'
@@ -32,7 +33,7 @@ const App = () => {
 
     const [step, setStep] = useState(() => {
         const storedStep = localStorage.getItem('jobApplicationStep')
-        return storedStep ? Number(storedStep) : 1
+        return storedStep ? Number(storedStep) : 0
     })
 
     const next = () => {
@@ -54,7 +55,8 @@ const App = () => {
     return (
         <FormProvider {...methods}>
             <div className="mx-auto max-w-md p-4">
-                <ProgressIndicator step={step} />
+                {step === 0 && <StarterPage onStart={next} />}
+                {step >= 1 && <ProgressIndicator step={step} />}
                 {step === 1 && <Step1PersonalInfo onNext={next} />}
                 {step === 2 && <Step2Experience onNext={next} onBack={back} />}
                 {step === 3 && (
