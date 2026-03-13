@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage
+.vite
+.codemie
 
 # Editor directories and files
 .vscode/*
