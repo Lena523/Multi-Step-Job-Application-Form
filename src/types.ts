@@ -12,6 +12,10 @@ export interface Step3Props {
     onSubmitSuccess: () => void
 }
 
+export interface Step4Props {
+    onClose: () => void
+}
+
 export interface ProgressProps {
     step: number
     totalSteps?: number

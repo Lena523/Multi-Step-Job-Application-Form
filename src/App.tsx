@@ -52,6 +52,13 @@ const App = () => {
         })
     }
 
+    const handleClose = () => {
+        localStorage.removeItem('jobApplicationData')
+        localStorage.removeItem('jobApplicationStep')
+        methods.reset()
+        setStep(0)
+    }
+
     return (
         <FormProvider {...methods}>
             <div className="mx-auto max-w-md p-4">
@@ -65,7 +72,7 @@ const App = () => {
                         onSubmitSuccess={() => setStep(4)}
                     />
                 )}
-                {step === 4 && <Step4SuccessPage />}
+                {step === 4 && <Step4SuccessPage onClose={handleClose} />}
             </div>
         </FormProvider>
     )
