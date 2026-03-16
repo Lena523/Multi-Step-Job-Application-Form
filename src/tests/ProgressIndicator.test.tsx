@@ -29,9 +29,9 @@ describe('ProgressIndicator', () => {
     })
 
     describe('default props', () => {
-        it('defaults totalSteps to 4 when not provided', () => {
+        it('defaults totalSteps to 3 when not provided', () => {
             render(<ProgressIndicator step={1} />)
-            expect(screen.getByText('Step 1 of 4')).toBeInTheDocument()
+            expect(screen.getByText('Step 1 of 3')).toBeInTheDocument()
         })
 
         it('defaults step to 0 when not provided', () => {
