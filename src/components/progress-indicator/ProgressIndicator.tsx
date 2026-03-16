@@ -3,7 +3,7 @@ import './progress.css'
 
 export const ProgressIndicator = ({
     step = 0,
-    totalSteps = 4,
+    totalSteps = 3,
 }: ProgressProps) => {
     const s = Math.max(0, Math.min(step, totalSteps))
 
