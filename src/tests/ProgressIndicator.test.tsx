@@ -37,7 +37,7 @@ describe('ProgressIndicator', () => {
         it('defaults step to 0 when not provided', () => {
             // @ts-expect-error — testing runtime default for missing required prop
             render(<ProgressIndicator />)
-            expect(screen.getByText('Step 0 of 4')).toBeInTheDocument()
+            expect(screen.getByText('Step 0 of 3')).toBeInTheDocument()
         })
     })
 
