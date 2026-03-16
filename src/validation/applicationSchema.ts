@@ -14,7 +14,7 @@ export const applicationSchema = yup.object({
     yearsOfExperience: yup
         .number()
         .typeError('Must be a number')
-        .min(1, 'At least - 1')
+        .min(1, 'Invalid number')
         .max(50, 'At most - 50')
         .required('Years of experience is required'),
     highestDegree: yup.string().required('Highest degree is required'),

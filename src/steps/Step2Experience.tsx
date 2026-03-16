@@ -65,8 +65,6 @@ const Step2Experience = ({ onNext, onBack }: Step2Props) => {
                 </label>
                 <input
                     type="number"
-                    minLength={1}
-                    maxLength={50}
                     {...register('yearsOfExperience', {
                         minLength: 1,
                         maxLength: 50,

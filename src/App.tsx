@@ -53,9 +53,9 @@ const App = () => {
     }
 
     const handleClose = () => {
+        methods.reset()
         localStorage.removeItem('jobApplicationData')
         localStorage.removeItem('jobApplicationStep')
-        methods.reset()
         setStep(0)
     }
 

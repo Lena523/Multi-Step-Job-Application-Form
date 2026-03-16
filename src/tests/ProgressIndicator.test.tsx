@@ -11,18 +11,18 @@ describe('ProgressIndicator', () => {
         })
 
         it('renders the step label with correct step and totalSteps', () => {
-            render(<ProgressIndicator step={2} totalSteps={4} />)
-            expect(screen.getByText('Step 2 of 4')).toBeInTheDocument()
+            render(<ProgressIndicator step={2} totalSteps={3} />)
+            expect(screen.getByText('Step 2 of 3')).toBeInTheDocument()
         })
 
         it('renders the progress container element', () => {
-            render(<ProgressIndicator step={1} totalSteps={4} />)
+            render(<ProgressIndicator step={1} totalSteps={3} />)
             const container = document.querySelector('.progress-container')
             expect(container).toBeInTheDocument()
         })
 
         it('renders the progress fill element', () => {
-            render(<ProgressIndicator step={1} totalSteps={4} />)
+            render(<ProgressIndicator step={1} totalSteps={3} />)
             const fill = document.querySelector('.progress-fill')
             expect(fill).toBeInTheDocument()
         })
@@ -43,15 +43,15 @@ describe('ProgressIndicator', () => {
 
     describe('data attributes', () => {
         it('sets data-step attribute to the current step', () => {
-            render(<ProgressIndicator step={3} totalSteps={4} />)
+            render(<ProgressIndicator step={3} totalSteps={3} />)
             const container = document.querySelector('.progress-container')
             expect(container).toHaveAttribute('data-step', '3')
         })
 
         it('sets data-steps attribute to totalSteps', () => {
-            render(<ProgressIndicator step={1} totalSteps={4} />)
+            render(<ProgressIndicator step={1} totalSteps={3} />)
             const container = document.querySelector('.progress-container')
-            expect(container).toHaveAttribute('data-steps', '4')
+            expect(container).toHaveAttribute('data-steps', '3')
         })
 
         it('reflects a custom totalSteps value in data-steps', () => {
@@ -63,27 +63,27 @@ describe('ProgressIndicator', () => {
 
     describe('step clamping', () => {
         it('clamps step below 0 to 0', () => {
-            render(<ProgressIndicator step={-5} totalSteps={4} />)
-            expect(screen.getByText('Step 0 of 4')).toBeInTheDocument()
+            render(<ProgressIndicator step={-5} totalSteps={3} />)
+            expect(screen.getByText('Step 0 of 3')).toBeInTheDocument()
             const container = document.querySelector('.progress-container')
             expect(container).toHaveAttribute('data-step', '0')
         })
 
         it('clamps step above totalSteps to totalSteps', () => {
-            render(<ProgressIndicator step={10} totalSteps={4} />)
-            expect(screen.getByText('Step 4 of 4')).toBeInTheDocument()
+            render(<ProgressIndicator step={10} totalSteps={3} />)
+            expect(screen.getByText('Step 3 of 3')).toBeInTheDocument()
             const container = document.querySelector('.progress-container')
-            expect(container).toHaveAttribute('data-step', '4')
+            expect(container).toHaveAttribute('data-step', '3')
         })
 
         it('does not clamp a step that equals totalSteps', () => {
-            render(<ProgressIndicator step={4} totalSteps={4} />)
-            expect(screen.getByText('Step 4 of 4')).toBeInTheDocument()
+            render(<ProgressIndicator step={3} totalSteps={3} />)
+            expect(screen.getByText('Step 3 of 3')).toBeInTheDocument()
         })
 
         it('does not clamp a step of 0', () => {
-            render(<ProgressIndicator step={0} totalSteps={4} />)
-            expect(screen.getByText('Step 0 of 4')).toBeInTheDocument()
+            render(<ProgressIndicator step={0} totalSteps={3} />)
+            expect(screen.getByText('Step 0 of 3')).toBeInTheDocument()
         })
     })
 
