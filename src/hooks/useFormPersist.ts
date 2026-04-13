@@ -19,7 +19,6 @@ export function useFormPersist(methods: UseFormReturn<ApplicationFormData>) {
             } catch (err) {
                 console.error('Failed to parse stored form data:', err)
                 localStorage.removeItem(STORAGE_KEY)
-                reset()
             }
         } else {
             reset()
